@@ -39,7 +39,8 @@
     },
     "repoURL": {
       "type": "string",
-      "defaultValue": "https://github/alok-01/",
+      //"defaultValue": "https://github.com/Alok-01/ArmTemplateExample.git"
+      "defaultValue": "https://github.com/davidebbo-test/Mvc52Application.git"
     },
     "branch": {
       "type": "string",
@@ -98,20 +99,22 @@
         //"name": "[variables('siteName')]",
         "name": "[concat(parameters('webAppNameprefix'),'-site-',copyIndex(), '-', uniqueString(resourceGroup().id))]",
         "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', concat(parameters('webAppNameprefix'),'-',copyIndex(), '-', uniqueString(resourceGroup().id)))]"
-      },
-      "resources": [
-        {
-          "name": "web",
-          "type": "sourcecontrols",
-          "apiVersion": "2015-08-01",
-          "dependsOn": "[concat(parameters('webAppNameprefix'),'-site-',copyIndex(), '-', uniqueString(resourceGroup().id))]",
-          "properties": {
-            "repoUrl": "[parameters('repoURL')]",
-            "branch": "[parameters('branch')]",
-            "IsManualIntegration": true 
-          }
-        }
-      ]
+      }
+      //,"resources": [
+      //  {
+      //    "name": "web",
+      //    "type": "sourcecontrols",
+      //    "apiVersion": "2015-08-01",
+      //    "dependsOn": [
+      //      "[concat(parameters('webAppNameprefix'),'-site-',copyIndex(), '-', uniqueString(resourceGroup().id))]"
+      //    ],
+      //    "properties": {
+      //      "repoUrl": "[parameters('repoURL')]",
+      //      "branch": "[parameters('branch')]",
+      //      "IsManualIntegration": true
+      //    }
+      //  }
+      //]
     },
     //Traffice Manager
     {
