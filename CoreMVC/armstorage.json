@@ -1,0 +1,141 @@
+{
+  "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "outputs": {},
+  "parameters": {
+    "storageAccountType": {
+      "type": "array",
+      "defaultValue": [ "Standard_LRS", "Standard_LRS", "Standard_GRS" ]
+    },
+    "storageAccountNamePrefix": {
+      "type": "string",
+      "defaultValue": "contoso",
+      "minLength": 1
+    },
+    "vNetPrivateName": {
+      "type": "string",
+      "defaultValue": "contoso-vnet-private",
+      "minLength": 1
+    },
+
+    "vNetAzureName": {
+      "type": "string",
+      "defaultValue": "contoso-vnet-azure",
+      "minLength": 1
+    }
+    //"tempStorageType": {
+    //  "type": "string",
+    //  "defaultValue": "Standard_LRS",
+    //  "allowedValues": [
+    //    "Standard_LRS",
+    //    "Standard_ZRS",
+    //    "Standard_GRS",
+    //    "Standard_RAGRS",
+    //    "Premium_LRS"
+    //  ]
+    //}
+  },
+  "resources": [
+    {
+      "apiVersion": "2016-01-01",
+      "copy": {
+        "count": "[length(parameters('storageAccountType'))]",
+        "name": "storageCopy"
+      },
+      "dependsOn": [],
+      "kind": "Storage",
+      "location": "[resourceGroup().location]",
+      //"name": "[variables('tempStorageName')]",
+      "name": "[concat(parameters('storageAccountNamePrefix'), copyIndex(),uniqueString(resourceGroup().id))]",
+      "sku": {
+        // "name": "[parameters('tempStorageType')]"
+        "name": "[parameters('storageAccountType')[copyIndex()]]"
+      },
+      "tags": {
+        // "displayName": "tempStorage"
+        "displayName": "[concat(parameters('storageAccountNamePrefix'), copyIndex(),uniqueString(resourceGroup().id))]"
+      },
+      "type": "Microsoft.Storage/storageAccounts"
+    },
+    {
+      "apiVersion": "2016-03-30",
+      "dependsOn": [],
+      "location": "[resourceGroup().location]",
+      //"name": "privateVNet",
+      "name": "[parameters('vNetPrivateName')]",
+      "properties": {
+        "addressSpace": {
+          "addressPrefixes": [
+            "[variables('vNetPrivatePrefix')]"
+          ]
+        },
+        "subnets": [
+          {
+            "name": "[variables('vNetPrivateSubnet1Name')]",
+            "properties": {
+              "addressPrefix": "[variables('vNetPrivateSubnet1Prefix')]"
+            }
+          },
+          {
+            "name": "[variables('vNetPrivateSubnet2Name')]",
+            "properties": {
+              "addressPrefix": "[variables('vNetPrivateSubnet2Prefix')]"
+            }
+          }
+        ]
+      },
+      "tags": {
+        //"displayName": "privateVNet"
+        "displayName": "[parameters('vNetPrivateName')]"
+      },
+      "type": "Microsoft.Network/virtualNetworks"
+    },
+    {
+      "apiVersion": "2016-03-30",
+      "dependsOn": [],
+      "location": "[resourceGroup().location]",
+      // "name": "azure",
+      "name": "[parameters('vNetAzureName')]",
+      "properties": {
+        "addressSpace": {
+          "addressPrefixes": [
+            "[variables('vNetAzurePrefix')]"
+          ]
+        },
+        "subnets": [
+          {
+            "name": "[variables('vNetAzureSubnet1Name')]",
+            "properties": {
+              "addressPrefix": "[variables('vNetAzureSubnet1Prefix')]"
+            }
+          },
+          {
+            "name": "[variables('vNetAzureSubnet2Name')]",
+            "properties": {
+              "addressPrefix": "[variables('vNetAzureSubnet2Prefix')]"
+            }
+          }
+        ]
+      },
+      "tags": {
+        //"displayName": "azure"
+        "displayName": "[parameters('vNetAzureName')]"
+      },
+      "type": "Microsoft.Network/virtualNetworks"
+    }
+  ],
+  "variables": {
+    "vNetPrivatePrefix": "172.16.0.0/16",
+    "vNetPrivateSubnet1Name": "private-subnet-1",
+    "vNetPrivateSubnet1Prefix": "172.16.1.0/24",
+    "vNetPrivateSubnet2Name": "private-subnet-2",
+    "vNetPrivateSubnet2Prefix": "172.16.2.0/24",
+    "vNetAzurePrefix": "10.0.0.0/16",
+    "vNetAzureSubnet1Name": "azure-subnet-1",
+    "vNetAzureSubnet1Prefix": "10.0.1.0/24",
+    "vNetAzureSubnet2Name": "azure-subnet-2",
+    "vNetAzureSubnet2Prefix": "10.0.2.0/24"
+
+    //"tempStorageName": "[concat('tempStorage', uniqueString(resourceGroup().id))]"
+  }
+}
