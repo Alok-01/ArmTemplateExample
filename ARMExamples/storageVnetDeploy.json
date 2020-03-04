@@ -28,18 +28,18 @@
       "defaultValue": "contoso-vpn-private",
       "minLength": 1
     },
-    "privateGatewayName" {
+    "privateGatewayName": {
       "type": "string",
       "defaultValue": "contoso-gateway-private",
       "minLength": 1
     },
 
-    "vpnAzureConnectionName" {
+    "vpnAzureConnectionName": {
       "type": "string",
       "defaultValue": "contoso-vpn-azure",
       "minLength": 1
     },
-    "azureGatewayName" {
+    "azureGatewayName": {
       "type": "string",
       "defaultValue": "contoso-gateway-azure",
       "minLength": 1
@@ -163,9 +163,9 @@
       "type": "Microsoft.Network/virtualNetworks"
     },
     {
-      //Private VPNConnection
+      "type": "Microsoft.Network/connections",
       "apiVersion": "2015-06-15",
-      "connectionType": "Vnet2Vnet",
+      "connectionType": "VNet2VNet",
       "dependsOn": [
         "[concat('Microsoft.Network/virtualNetworkgateways/',parameters('privateGatewayName'))]",
         "[concat('Microsoft.Network/virtualNetworkgateways/',parameters('azureGatewayName'))]"
@@ -181,13 +181,12 @@
         }
       },
       "routingWeight": 3,
-      "sharedKey": "[parameters('vpnSharedKey')]",
-      "type": "Microsoft.Network/connections"
+      "sharedKey": "[parameters('vpnSharedKey')]"
+
     },
     {
-      //Azure VPNConnection One
       "apiVersion": "2015-06-15",
-      "connectionType": "Vnet2Vnet",
+      "connectionType": "VNet2VNet",
       "dependsOn": [
         "[concat('Microsoft.Network/virtualNetworkgateways/',parameters('privateGatewayName'))]",
         "[concat('Microsoft.Network/virtualNetworkgateways/',parameters('azureGatewayName'))]"
@@ -281,20 +280,19 @@
     "vNetPrivateSubnet1Prefix": "172.16.1.0/24",
     "vNetPrivateSubnet2Name": "private-subnet-2",
     "vNetPrivateSubnet2Prefix": "172.16.2.0/24",
-    "vNetPrivateGatewayPrefix": "172.16.200.0/24", //checkl
+    "vNetPrivateGatewayPrefix": "172.16.200.0/24",
     "vNetAzurePrefix": "10.0.0.0/16",
     "vNetAzureSubnet1Name": "azure-subnet-1",
     "vNetAzureSubnet1Prefix": "10.0.1.0/24",
     "vNetAzureSubnet2Name": "azure-subnet-2",
     "vNetAzureSubnet2Prefix": "10.0.2.0/24",
-    "vNetAzureGatewayPrefix": "10.0.200.0/24", //checkl
+    "vNetAzureGatewayPrefix": "10.0.200.0/24",
     "vNetPrivateId": "resourceId('Microsoft.Network/virtualNetworks', parameters('vNetPrivateName'))",
     "privateGatewaySubnetId": "[concat(variables('vNetPrivateId'),'/subnets/','GatewaySubnet')]",
     "privatePublicIpId": "resourceId('Microsoft.Network/publicIpAddresses', parameters('privateGatewayPublicIpName'))",
     "vNetAzureId": "resourceId('Microsoft.Network/virtualNetworks', parameters('vNetAzureName'))",
     "azureGatewaySubnetId": "[concat(variables('vNetAzureId'),'/subnets/','GatewaySubnet')]",
     "azurePublicIpId": "resourceId('Microsoft.Network/publicIpAddresses', parameters('azureGatewayPublicIpName'))"
-    //"azurePublicIpId": "resourceId('Microsoft.Network/publicIpAddresses', parameters('azureGatewayPublicIpName'))"
 
   }
 }
